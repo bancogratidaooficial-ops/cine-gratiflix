@@ -2,86 +2,72 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CODIFICADOR CINE GRATIFLIX - PASTAS</title>
+<title>CODIFICADOR CINE GRATIFLIX</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0a0a0a;color:#fff;font-family:Arial;padding:14px}
 .top{background:#000;padding:14px;border-radius:12px;margin-bottom:12px;display:flex;justify-content:space-between}
 .card{background:#151515;border:1px solid #222;padding:14px;border-radius:12px;margin-bottom:12px}
 input,select,textarea{width:100%;padding:14px;background:#000;border:1px solid #333;color:#fff;border-radius:12px;margin-bottom:8px}
 .btn{width:100%;padding:14px;border-radius:12px;border:0;font-weight:900;cursor:pointer;margin-bottom:8px}
-.btn-verde{background:#00ff88;color:#000}.btn-amarelo{background:#ffcc00;color:#000}.btn-cinza{background:#222;color:#fff}
+.btn-verde{background:#00ff88;color:#000}.btn-amarelo{background:#ffcc00;color:#000}.btn-azul{background:#00aaff;color:#fff}.btn-cinza{background:#222;color:#fff}
 .pasta{display:inline-block;background:#111;border:1px solid #333;padding:6px 12px;border-radius:20px;margin:4px;cursor:pointer;font-size:12px}
-.pasta.ativa{background:#f00;border-color:#f00;color:#fff}
-.jsonBox{background:#000;border:1px solid #333;padding:10px;border-radius:8px;word-break:break-all;font-size:11px;max-height:200px;overflow:auto}
 .filmeItem{background:#0f0f0f;border:1px solid #222;padding:8px;border-radius:8px;display:flex;gap:8px;align-items:center;margin-bottom:6px}
 .filmeItem img{width:60px;height:40px;object-fit:cover;border-radius:4px}
+.jsonBox{background:#000;border:1px solid #333;padding:10px;border-radius:8px;word-break:break-all;font-size:11px;max-height:200px;overflow:auto;margin-top:8px}
+.linkBox{background:#001a00;border:1px solid #00ff88;padding:12px;border-radius:12px;word-break:break-all;font-size:12px;margin-top:10px}
 </style>
 </head>
 <body>
-<div class="top"><b>🎬 CODIFICADOR COM PASTAS</b><span onclick="location.href='index.html'" style="color:#ffcc00">← Voltar pro site</span></div>
+<div class="top"><b>🎬 CODIFICADOR</b><span onclick="location.href='index.html'" style="color:#ffcc00">← Site</span></div>
 
 <div class="card">
-<h3 style="margin:0 0 8px 0">📁 GERENCIAR GÊNEROS (PASTAS)</h3>
+<h3>📁 GÊNEROS</h3>
 <div id="listaPastas"></div>
-<div style="display:flex;gap:8px;margin-top:8px">
-<input id="novoGenero" placeholder="Novo gênero ex: SUSPENSE">
-<button class="btn btn-amarelo" style="width:120px" onclick="addGenero()">+ Criar</button>
-</div>
-<small style="color:#888">Clique na pasta para remover</small>
+<div style="display:flex;gap:8px;margin-top:8px"><input id="novoGenero" placeholder="Ex: SUSPENSE"><button class="btn btn-amarelo" style="width:120px" onclick="addGenero()">+ Criar</button></div>
 </div>
 
 <div class="card">
 <h3>➕ ADICIONAR FILME</h3>
-<input id="t" placeholder="Nome do filme">
-<input id="ano" placeholder="Ano ex: 2024">
-<input id="link" placeholder="Link YouTube (https://youtube.com/watch?v=...)">
-<select id="tag"></select>
+<input id="t" placeholder="Nome do filme"><input id="ano" placeholder="Ano"><input id="link" placeholder="Link YouTube"><select id="tag"></select>
 <button class="btn btn-verde" onclick="addFilme()">Salvar Filme</button>
 </div>
 
 <div class="card">
-<h3>📋 FILMES CADASTRADOS (<span id="qtd">0</span>)</h3>
+<h3>📋 FILMES (<span id="qtd">0</span>)</h3>
 <div id="listaFilmes"></div>
-<button class="btn btn-amarelo" onclick="exportar()">📤 Exportar / Copiar JSON</button>
-<button class="btn btn-cinza" onclick="limparTudo()">🗑️ Limpar Tudo</button>
+<button class="btn btn-azul" onclick="gerarLinkCodificado()">🔗 GERAR LINK CODIFICADO</button>
+<div id="linkCodificadoBox" style="display:none"><div class="linkBox" id="linkCodificado"></div><button class="btn btn-verde" style="margin-top:8px" onclick="copiarLink()">📋 COPIAR LINK</button><button class="btn btn-amarelo" style="margin-top:8px" onclick="abrirLink()">🚀 ABRIR LINK</button></div>
+<button class="btn btn-amarelo" onclick="exportar()" style="margin-top:12px">📤 Exportar JSON</button>
+<button class="btn btn-cinza" onclick="limparTudo()">🗑️ Limpar</button>
 <div id="jsonOut" class="jsonBox" style="display:none"></div>
 </div>
 
 <script>
 let generos=JSON.parse(localStorage.getItem('cine_generos')||'null')||["AÇÃO","FICÇÃO","TERROR","COMÉDIA","ROMANCE","LANÇAMENTO"];
 let filmes=JSON.parse(localStorage.getItem('cine_filmes_pastas')||'[]');
+let ultimoLink="";
 
 function salvar(){localStorage.setItem('cine_generos',JSON.stringify(generos));localStorage.setItem('cine_filmes_pastas',JSON.stringify(filmes));render();}
-
-function renderPastas(){
-document.getElementById('listaPastas').innerHTML=generos.map(g=>`<span class="pasta" onclick="remGenero('${g}')">${g} ✕</span>`).join('');
-document.getElementById('tag').innerHTML=generos.map(g=>`<option>${g}</option>`).join('');
-}
-function addGenero(){let v=document.getElementById('novoGenero').value.trim().toUpperCase();if(!v)return;if(generos.includes(v))return alert('Já existe');generos.push(v);document.getElementById('novoGenero').value='';salvar();}
-function remGenero(g){if(!confirm('Remover pasta '+g+'?'))return;generos=generos.filter(x=>x!==g);salvar();}
-
+function renderPastas(){document.getElementById('listaPastas').innerHTML=generos.map(g=>`<span class="pasta" onclick="remGenero('${g}')">${g} ✕</span>`).join('');document.getElementById('tag').innerHTML=generos.map(g=>`<option>${g}</option>`).join('');}
+function addGenero(){let v=document.getElementById('novoGenero').value.trim().toUpperCase();if(!v)return;if(generos.includes(v))return;generos.push(v);document.getElementById('novoGenero').value='';salvar();}
+function remGenero(g){if(!confirm('Remover '+g+'?'))return;generos=generos.filter(x=>x!==g);salvar();}
 function getYouTubeId(url){let m=url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);return m?m[1]:null;}
-
-function addFilme(){
-let titulo=document.getElementById('t').value.trim();
-let ano=document.getElementById('ano').value.trim()||'2024';
-let link=document.getElementById('link').value.trim();
-let tag=document.getElementById('tag').value;
-if(!titulo||!link)return alert('Preencha nome e link');
-let vid=getYouTubeId(link);if(!vid)return alert('Link YouTube inválido');
-let img=`https://img.youtube.com/vi/${vid}/hqdefault.jpg`;
-filmes.unshift({t:titulo,ano:ano,tag:tag,img:img,vid:vid});
-document.getElementById('t').value='';document.getElementById('link').value='';
-salvar();
-}
-
-function renderFilmes(){
-document.getElementById('qtd').innerText=filmes.length;
-document.getElementById('listaFilmes').innerHTML=filmes.map((f,i)=>`<div class="filmeItem"><img src="${f.img}"><div style="flex:1"><b style="font-size:12px">${f.t}</b><br><small style="color:#888">${f.tag} - ${f.ano}</small></div><span onclick="remFilme(${i})" style="color:#f00;padding:8px">✕</span></div>`).join('');
-}
+function addFilme(){let titulo=document.getElementById('t').value.trim();let ano=document.getElementById('ano').value.trim()||'2024';let link=document.getElementById('link').value.trim();let tag=document.getElementById('tag').value;if(!titulo||!link)return alert('Preencha');let vid=getYouTubeId(link);if(!vid)return alert('Link inválido');let img=`https://img.youtube.com/vi/${vid}/hqdefault.jpg`;filmes.unshift({t:titulo,ano:ano,tag:tag,img:img,vid:vid});document.getElementById('t').value='';document.getElementById('link').value='';salvar();}
+function renderFilmes(){document.getElementById('qtd').innerText=filmes.length;document.getElementById('listaFilmes').innerHTML=filmes.map((f,i)=>`<div class="filmeItem"><img src="${f.img}"><div style="flex:1"><b style="font-size:12px">${f.t}</b><br><small style="color:#888">${f.tag} - ${f.ano}</small></div><span onclick="remFilme(${i})" style="color:#f00;padding:8px">✕</span></div>`).join('');}
 function remFilme(i){if(!confirm('Remover?'))return;filmes.splice(i,1);salvar();}
-function exportar(){let j=JSON.stringify(filmes);document.getElementById('jsonOut').style.display='block';document.getElementById('jsonOut').innerText=j;navigator.clipboard.writeText(j);alert('JSON copiado! Cole no index.html se quiser fixo, ou já está salvo no navegador');}
-function limparTudo(){if(!confirm('Apagar todos filmes?'))return;filmes=[];salvar();}
+function exportar(){let j=JSON.stringify(filmes);document.getElementById('jsonOut').style.display='block';document.getElementById('jsonOut').innerText=j;navigator.clipboard.writeText(j);alert('JSON copiado');}
+
+function gerarLinkCodificado(){
+if(!filmes.length)return alert('Cadastre pelo menos 1 filme');
+let dados=btoa(unescape(encodeURIComponent(JSON.stringify({g:generos,f:filmes}))));
+let base=window.location.href.replace('codificador.html','').replace(/\/$/,'')+'/index.html';
+ultimoLink=base+'?data='+dados;
+document.getElementById('linkCodificado').innerText=ultimoLink;
+document.getElementById('linkCodificadoBox').style.display='block';
+}
+function copiarLink(){navigator.clipboard.writeText(ultimoLink);alert('Link copiado! Manda pro cliente');}
+function abrirLink(){window.open(ultimoLink,'_blank');}
+
 function render(){renderPastas();renderFilmes();}
 render();
 </script>
