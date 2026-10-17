@@ -2,111 +2,59 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>codificador</title>
+<title>CINE GRATIFLIX - PASTAS</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#050505;color:#fff;font-family:Arial}
-.top{background:#000;padding:14px;display:flex;justify-content:space-between;position:sticky;top:0;z-index:20;border-bottom:2px solid #f00}
-.hero{padding:16px;background:linear-gradient(180deg,#1a0000,#050505)}
-.chips{display:flex;gap:8px;overflow-x:auto;padding:12px;background:#0a0a0a;position:sticky;top:58px;z-index:15;border-bottom:1px solid #222}
+.top{background:#000;padding:14px;display:flex;justify-content:space-between;position:sticky;top:0;z-index:20;border-bottom:1px solid #222}
+.hero{padding:16px;background:linear-gradient(180deg,#000,#050505)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:8px 0;flex-wrap:nowrap}
 .chip{white-space:nowrap;background:#111;border:1px solid #333;padding:8px 14px;border-radius:20px;font-size:12px;cursor:pointer}
 .chip.ativo{background:#f00;border-color:#f00;font-weight:900}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px}
-.card{background:#111;border-radius:18px;overflow:hidden;border:1px solid #222;cursor:pointer;position:relative}
+.card{background:#111;border-radius:15px;overflow:hidden;border:1px solid #222;cursor:pointer;position:relative}
 .card img{width:100%;height:210px;object-fit:cover;background:#222}
-.tag{position:absolute;top:0;left:0;margin:8px;background:#00ff88;color:#000;font-size:9px;padding:4px 7px;border-radius:6px;font-weight:900}
+.tag{position:absolute;top:0;left:0;margin:8px;background:#ffcc00;color:#000;font-size:9px;padding:4px 7px;border-radius:20px;font-weight:900}
 #player{position:fixed;inset:0;background:#000;z-index:999;display:none;flex-direction:column}
-.inputCod{flex:1;padding:12px;border-radius:30px;border:1px solid #333;background:#000;color:#fff;text-align:center;font-weight:900}
 #paywall{position:fixed;inset:0;background:rgba(0,0,0,0.92);z-index:998;display:none;align-items:flex-end}
-.paybox{background:#121212;width:100%;border-radius:28px 28px 0 0;padding:20px;max-height:95vh;overflow:auto}
+.paybox{background:#121212;width:100%;border-radius:22px 22px 0 0;padding:20px;max-height:95vh;overflow:auto}
 .pastaTitulo{padding:14px 12px 0 12px;font-weight:900;color:#ffcc00;font-size:14px}
 </style>
 </head>
 <body>
-<div class="top"><div style="font-weight:900">🎬 CINE <b style="color:#f00">GRATIFLIX</b></div><div onclick="location.href='./codificador-pastas.html'" style="background:#222;padding:8px 12px;border-radius:20px;font-size:11px">CODIFICADOR</div></div>
-<div class="hero"><small id="timer" style="color:#ffcc00;font-weight:900">⏳ Grátis: <span id="tempo">03:00:00</span></small><div style="background:#111;padding:12px;border-radius:14px;border:1px solid #222;margin-top:10px;display:flex;gap:8px"><input id="inputCodigoTopo" class="inputCod" placeholder="CINE-XXXX"><button id="btnTopo" style="background:#00ff88;color:#000;border:none;padding:12px 18px;border-radius:30px;font-weight:900">LIBERAR</button></div><small id="statusCodigo" style="color:#888"></small></div>
-<div class="chips" id="chips"></div>
-<div id="conteudo"></div>
-
-<div id="player"><div style="padding:12px;background:#000;display:flex;justify-content:space-between"><b id="playerTitle"></b><button id="btnFechar" style="background:#222;color:#fff;border:none;padding:10px 18px;border-radius:20px">✕ FECHAR</button></div><div id="playerBox" style="flex:1;background:#000"></div></div>
-<div id="paywall"><div class="paybox"><div style="display:flex;justify-content:space-between"><b>🔒 BLOQUEADO</b><span onclick="document.getElementById('paywall').style.display='none'" style="font-size:24px">✕</span></div><h2>Tempo acabou</h2><p style="color:#ccc;font-size:13px">Faça Pix R$2,99 e envie comprovante para gerar código</p><div style="background:#fff;padding:12px;border-radius:12px;text-align:center;margin:10px 0"><img id="qrPix" width="200"><br><b style="color:#000">Pix CPF: 025.446.319-37</b></div><button onclick="copiarPix()" style="width:100%;background:#ffcc00;color:#000;padding:14px;border-radius:30px;font-weight:900;border:none">COPIAR CPF</button><button id="btnEnviar" style="width:100%;background:#25D366;color:#fff;padding:14px;border-radius:30px;font-weight:900;border:none;margin-top:10px">📤 ENVIAR COMPROVANTE</button><div style="display:flex;gap:8px;margin-top:12px"><input id="inputCodigo" class="inputCod" placeholder="CINE-XXXX"><button id="btnPay" style="background:#fff;color:#000;border:none;padding:14px 18px;border-radius:30px;font-weight:900">LIBERAR</button></div></div></div>
-
+<div class="top"><div style="font-weight:900">🎬 CINE <b style="color:#f00">GRATIFLIX</b></div><div onclick="location.href='codificador.html'" style="color:#ffcc00;font-weight:900">⚙️ Codificar</div></div>
+<div class="hero"><div id="chips" class="chips"></div><div id="conteudo"></div></div>
+<div id="player"><div style="padding:12px;background:#000;display:flex;justify-content:space-between"><b id="playerTitulo"></b><span onclick="fecharPlayer()" style="background:#222;padding:6px 12px;border-radius:20px">✕ Fechar</span></div><div id="playerVideo" style="flex:1"></div></div>
+<div id="paywall"><div class="paybox"><div style="display:flex;justify-content:space-between"><b>🔒 BLOQUEADO</b><span onclick="fecharPaywall()">✕</span></div><p>Entre no grupo VIP para liberar todos os filmes</p><button onclick="window.open(LINK_GRUPO,'_blank')" style="width:100%;padding:14px;background:#00ff88;border:0;border-radius:12px;font-weight:900">ENTRAR NO GRUPO</button></div></div>
 <script>
-const LINK_GRUPO="https://chat.whatsapp.com/BtNurXoNfsg2VVuQb8Tasc?s=cl&p=a&mlu=4&ilr=4";
-let filmesPadrao = JSON.parse(localStorage.getItem('cine_filmes_pastas')||'null');
-if(!filmesPadrao){
- filmesPadrao = [
-  {"t":"Tempos Modernos","ano":"1936","tag":"COMÉDIA","img":"https://img.youtube.com/vi/HAaZ1q1v2Is/hqdefault.jpg","video":"https://www.youtube-nocookie.com/embed/HAaZ1q1v2Is","desc":"Comédia"},
-  {"t":"A Noite dos Mortos-Vivos","ano":"1968","tag":"TERROR","img":"https://img.youtube.com/vi/0hNT_vhdCcc/hqdefault.jpg","video":"https://archive.org/embed/night_of_the_living_dead","desc":"Terror"}
- ];
- const idsAline=["Xz1YqiFiNZQ","32zwH-IvzAs","ouC258B1jKo","ZKXBcPbFTMs","qKRyqXnwbNI","MUZ4FpGzsqU","tMGWE_qqxkE","bSKIBqSHrNI","0hNT_vhdCcc","Gnv_rD6sJgM","kDBSwSeSd8o","t89cAmA3oec","PuVuB9iKZGg","eBNd-V4duWY","RJdueseYras","VPT0gE8Ve3I","t5nv9FneoZs","SxVNIJlcM7o","-6r0nt0gmWY","cZYOWew11MM","KSA8LJBcuBw","ifEyKWNjSHQ","6vyGebfwe94","XUW0012sA7o","tOpNproAsa4","QOcbqIMBGEo","oBt9z6Qpb1w","GwzaCpHKSco","LniTsQUUaIY","g20SBcNiqvI","16iMqoXFdwA","fZTEVgeYmd4","t5-es5PlQUs","vZj0X0Qzstg","ajMd9c8QHMI","HPIQ3-eJmwY","JkwFWFbir1E","zsdQFZnDfoA","PNRXZx3Bz-Q","kU-7uPQZBWM","QEvlM0VxIt4","cYxgBL9X-4Q","kNl7YVgvAXk","fUyp2e3R1i8","8jshmm8ev74","xdvl0KfI3dk","ERdCY4rgdIc","CSe_rCyNGzs","bQQ0PGVAGaQ","68WyOt9egTU","nqxCRAzakE8","dKZMRnTu61E","R6Iq8aSt0Zg","53yDYHibm04","yysbH_A8sXM","jYBruJX9RHw","qw1bSUmXpUY","O_PlC4DZaiw","TiSz_xUkoIY","UVk6EDSCKMc","s-GgY7QiYSE","qzy5S3LQ0Nw","IFSUcW4Spag","iBZukP-9XdA","FD4CeWNIQdk","3cAaosl9FoY","tWZxrVwUyN8","9CjByZriDkA","8h54C7tIj-M","IkUCBicGnk0","MbgjeF9QAVE","fwLrlXZTdK0","KKJ5e_ksjO4","qIN82R8MLrQ","ZXc-hKDDGRA","i_QMcbI61yo","Br9PbQBuQtg","3f5TlLMocHs","RZ4p-VyShMU","3k35crCBBB4","nIHU2SVLNQ0","poGy3eNjO3A","zGgrvHKKHuA","8Uufoi9xv7Q","TaDQWHlC8YY","G9qBZ6NaMfY","ppmUuEv6TBk"];
- idsAline.forEach((id,i)=> filmesPadrao.push({t:`Filme ${i+1}`,ano:"2024",tag:"LANÇAMENTO",img:`https://img.youtube.com/vi/${id}/hqdefault.jpg`,video:`https://www.youtube-nocookie.com/embed/${id}`,desc:"Filme"}));
-}
-
-let generos = JSON.parse(localStorage.getItem('cine_generos')||'null') || ["AÇÃO","FICÇÃO","TERROR","COMÉDIA","ROMANCE","DESENHOS","LANÇAMENTO","CHAVES","DORAMA"];
-let filtroAtivo = "TODOS";
-
+const LINK_GRUPO="https://chat.whatsapp.com/BtNurXoNfSg2V2QbXTasC7s?mode=ac_t";
+let filmesPadrao=JSON.parse(localStorage.getItem('cine_filmes_pastas')||'null')||[
+{t:"Tempos Modernos",ano:"1936",tag:"COMEDIA",img:"https://img.youtube.com/vi/HAaZ1q1v2Is/hqdefault.jpg",vid:"HAaZ1q1v2Is"},
+{t:"A Noite dos Mortos Vivos",ano:"1968",tag:"TERROR",img:"https://img.youtube.com/vi/H91BxkQy6sE/hqdefault.jpg",vid:"H91BxkQy6sE"}
+];
+let generos=JSON.parse(localStorage.getItem('cine_generos')||'null')||["AÇÃO","FICÇÃO","TERROR","COMÉDIA","ROMANCE","LANÇAMENTO"];
+let filtroAtivo="TODOS";
 function renderChips(){
- let counts={}; filmesPadrao.forEach(f=> counts[f.tag]=(counts[f.tag]||0)+1);
- let html=`<div class="chip ${filtroAtivo==='TODOS'?'ativo':''}" onclick="setFiltro('TODOS')">TODOS (${filmesPadrao.length})</div>`;
- generos.forEach(g=>{
-  let c=counts[g]||0;
-  html+=`<div class="chip ${filtroAtivo===g?'ativo':''}" onclick="setFiltro('${g}')">${g} (${c})</div>`;
- });
- document.getElementById('chips').innerHTML=html;
+let counts={};filmesPadrao.forEach(f=>counts[f.tag]=(counts[f.tag]||0)+1);
+let html=`<div class="chip ${filtroAtivo==="TODOS"?"ativo":""}" onclick="setFiltro('TODOS')">TODOS (${filmesPadrao.length})</div>`;
+generos.forEach(g=>{let c=counts[g]||0;html+=`<div class="chip ${filtroAtivo===g?"ativo":""}" onclick="setFiltro('${g}')">${g} (${c})</div>`});
+document.getElementById('chips').innerHTML=html;
 }
-
-function setFiltro(g){ filtroAtivo=g; renderChips(); renderGrid(); }
-
+function setFiltro(g){filtroAtivo=g;renderChips();renderGrid();}
 function renderGrid(){
- let lista = filtroAtivo==='TODOS'? filmesPadrao : filmesPadrao.filter(f=>f.tag===filtroAtivo);
- window.todosFilmes=lista;
- let html='';
- if(filtroAtivo==='TODOS'){
-   generos.forEach(gen=>{
-     let doGen = filmesPadrao.filter(f=>f.tag===gen);
-     if(!doGen.length) return;
-     html+=`<div class="pastaTitulo">📁 ${gen} - ${doGen.length} filmes</div><div class="grid">`+doGen.map((f)=>{
-       let globalIdx = filmesPadrao.indexOf(f);
-       return `<div class="card" onclick="abrirPlayerPorGlobal(${globalIdx})"><span class="tag">${f.tag}</span><img src="${f.img}" loading="lazy" onerror="this.src='https://via.placeholder.com/400'"><div style="padding:8px"><b style="font-size:12px">${f.t}</b></div></div>`;
-     }).join('')+'</div>';
-   });
- }else{
-   html='<div class="grid">'+lista.map((f,i)=>`<div class="card" data-i="${i}"><span class="tag">${f.tag}</span><img src="${f.img}" loading="lazy"><div style="padding:8px"><b style="font-size:12px">${f.t}</b></div></div>`).join('')+'</div>';
- }
- document.getElementById('conteudo').innerHTML=html;
- if(filtroAtivo!=='TODOS'){
-   document.querySelectorAll('.card').forEach(el=>el.addEventListener('click',()=>abrirPlayer(parseInt(el.dataset.i))));
- }
+let lista=filtroAtivo==="TODOS"?filmesPadrao:filmesPadrao.filter(f=>f.tag===filtroAtivo);
+window.todosFilmes=lista;
+let html="";
+if(filtroAtivo==="TODOS"){
+generos.forEach(gen=>{let doGen=filmesPadrao.filter(f=>f.tag===gen);if(!doGen.length)return;html+=`<div class="pastaTitulo">📁 ${gen} - ${doGen.length} filmes</div><div class="grid">`+doGen.map(f=>{let gi=filmesPadrao.indexOf(f);return `<div class="card" onclick="abrirPlayerPorGlobal(${gi})"><span class="tag">${f.tag}</span><img src="${f.img}" onerror="this.src='https://via.placeholder.com/300x210?text=SEM+CAPA'"><div style="padding:8px;font-size:12px">${f.t}</div></div>`}).join('')+'</div>'});
+}else{html=`<div class="grid">`+lista.map((f,i)=>`<div class="card" data-i="${i}"><span class="tag">${f.tag}</span><img src="${f.img}" onerror="this.src='https://via.placeholder.com/300x210?text=SEM+CAPA'"><div style="padding:8px;font-size:12px">${f.t}</div></div>`).join('')+'</div>'}
+document.getElementById('conteudo').innerHTML=html;
+if(filtroAtivo!=="TODOS")document.querySelectorAll('.card').forEach(el=>el.addEventListener('click',()=>abrirPlayer(parseInt(el.dataset.i))));
 }
-
-function abrirPlayer(i){
- let f=window.todosFilmes[i];
- if(!pago && tempo<=0){ document.getElementById('paywall').style.display='flex'; return; }
- document.getElementById('playerTitle').innerText=f.t+' - '+f.tag;
- document.getElementById('playerBox').innerHTML=`<iframe src="${f.video}?autoplay=1" allowfullscreen style="width:100%;height:100%;border:none"></iframe>`;
- document.getElementById('player').style.display='flex';
-}
-function abrirPlayerPorGlobal(idx){
- let f=filmesPadrao[idx];
- if(!pago && tempo<=0){ document.getElementById('paywall').style.display='flex'; return; }
- document.getElementById('playerTitle').innerText=f.t+' - '+f.tag;
- document.getElementById('playerBox').innerHTML=`<iframe src="${f.video}?autoplay=1" allowfullscreen style="width:100%;height:100%;border:none"></iframe>`;
- document.getElementById('player').style.display='flex';
-}
-
-document.getElementById('btnFechar').addEventListener('click',()=>{document.getElementById('player').style.display='none';document.getElementById('playerBox').innerHTML='';});
-
-function geraPix(){let b="00020126580014BR.GOV.BCB.PIX01110254463193752040000530398654042.995802BR5913BANCO GRATIDAO6009CURITIBA62070503***6304";function crc(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let j=0;j<8;j++)c=c&0x8000?(c<<1)^0x1021:c<<1;c&=0xFFFF}return c.toString(16).toUpperCase().padStart(4,'0')}return b+crc(b+"6304")}
-document.getElementById('qrPix').src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+encodeURIComponent(geraPix());
-let tempo=parseInt(localStorage.getItem('cine_t')||10800);let pago=localStorage.getItem('cine_pago')==='true';let timerEl=document.getElementById('tempo');
-if(pago){document.getElementById('timer').innerHTML='✅ PREMIUM ATIVO - '+localStorage.getItem('cine_code')}
-setInterval(()=>{if(pago)return;if(tempo<=0){document.getElementById('paywall').style.display='flex';timerEl.innerText='00:00:00';return}tempo--;localStorage.setItem('cine_t',tempo);let h=Math.floor(tempo/3600),m=Math.floor((tempo%3600)/60),s=tempo%60;document.getElementById('tempo').innerText=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`},1000);
-function copiarPix(){navigator.clipboard.writeText('025.446.319-37');alert('CPF copiado')}
-function liberar(c){localStorage.setItem('cine_pago','true');localStorage.setItem('cine_code',c);localStorage.setItem('cine_t','10800');alert('✅ LIBERADO '+c);location.reload();}
-function tryLib(id){let v=document.getElementById(id).value.toUpperCase().trim();if(v.length<6)return alert('Código inválido');liberar(v);}
-document.getElementById('btnTopo').addEventListener('click',()=>tryLib('inputCodigoTopo'));
-document.getElementById('btnPay').addEventListener('click',()=>tryLib('inputCodigo'));
-document.getElementById('btnEnviar').addEventListener('click',()=>window.open(LINK_GRUPO,'_blank'));
+function abrirPlayerPorGlobal(i){abrirPlayerPorFilme(filmesPadrao[i])}
+function abrirPlayer(i){abrirPlayerPorFilme(window.todosFilmes[i])}
+function abrirPlayerPorFilme(f){document.getElementById('playerTitulo').innerText=f.t;document.getElementById('playerVideo').innerHTML=`<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${f.vid}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;document.getElementById('player').style.display='flex';setTimeout(()=>{document.getElementById('paywall').style.display='flex'}, 120000);}
+function fecharPlayer(){document.getElementById('player').style.display='none';document.getElementById('playerVideo').innerHTML='';fecharPaywall();}
+function fecharPaywall(){document.getElementById('paywall').style.display='none';}
 renderChips();renderGrid();
 </script>
 </body>
